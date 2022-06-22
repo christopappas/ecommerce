@@ -413,9 +413,14 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_discount(self, obj):
         try:
             discount = obj.discounts.all()[0]
-            return str(discount.amount)
+            if discount:
+                return {
+                    'offer_type': discount.offer.offer_type,
+                    'amount': str(discount.amount),
+                }
+            return None
         except IndexError:
-            return '0'
+            return None
 
     def get_enable_hoist_order_history(self, obj):
         try:
