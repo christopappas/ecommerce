@@ -443,9 +443,10 @@ class OrderSerializer(serializers.ModelSerializer):
             obj.enable_hoist_order_history = order_history_enabled
         except (AttributeError, ValueError) as error:
             logger.exception(
-                'An error occurred while attempting to set ENABLE_HOIST_ORDER_HISTORY flag, error: [%s]',
+                'An error occurred while attempting to get ENABLE_HOIST_ORDER_HISTORY flag, error: [%s]',
                 error
             )
+            obj.enable_hoist_order_history = None
         return obj.enable_hoist_order_history
 
     def get_payment_method(self, obj):
