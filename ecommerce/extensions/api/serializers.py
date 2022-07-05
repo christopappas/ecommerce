@@ -27,7 +27,7 @@ from ecommerce.core.constants import (
     ISO_8601_FORMAT,
     SEAT_PRODUCT_CLASS_NAME
 )
-from ecommerce.core.url_utils import get_ecommerce_url
+from ecommerce.core.url_utils import get_ecommerce_url, get_lms_dashboard_url, get_lms_program_dashboard_url
 from ecommerce.core.utils import log_message_and_raise_validation_error
 from ecommerce.coupons.utils import is_coupon_available
 from ecommerce.courses.models import Course
@@ -70,6 +70,7 @@ from ecommerce.extensions.offer.utils import (
     send_assigned_offer_reminder_email,
     send_revoked_offer_email
 )
+from ecommerce.extensions.payment.utils import get_program_uuid
 from ecommerce.extensions.voucher.utils import create_enterprise_vouchers
 from ecommerce.invoice.models import Invoice
 from ecommerce.programs.custom import class_path
@@ -397,6 +398,7 @@ class LineSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     """Serializer for parsing order data."""
     billing_address = BillingAddressSerializer(allow_null=True)
+    dashboard_url = serializers.SerializerMethodField()
     date_placed = serializers.DateTimeField(format=ISO_8601_FORMAT)
     discount = serializers.SerializerMethodField()
     lines = LineSerializer(many=True)
@@ -422,6 +424,17 @@ class OrderSerializer(serializers.ModelSerializer):
         try:
             return obj.sources.all()[0].source_type.name
         except IndexError:
+            return None
+
+    def get_dashboard_url(self, obj):
+        try:
+            program_uuid = get_program_uuid(obj)
+            if program_uuid:
+                order_dashboard_url = get_lms_program_dashboard_url(program_uuid)
+            else:
+                order_dashboard_url = get_lms_dashboard_url()
+            return order_dashboard_url
+        except ValueError:
             return None
 
     def get_discount(self, obj):
@@ -501,6 +514,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'billing_address',
             'currency',
             'date_placed',
+            'dashboard_url',
             'discount',
             'enable_hoist_order_history',
             'enterprise_customer_info',
