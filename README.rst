@@ -30,7 +30,7 @@ The code in this repository is licensed under version 3 of the AGPL unless other
 How To Contribute
 -----------------
 
-Notice: Internal 2U contributions should be made against the `2u/release` branch.  Open source contributions should continue to be made against the `master` branch.
+Notice: Internal 2U contributions should be made against the `2u/main` branch.  Open source contributions should continue to be made against the `master` branch.
 
 Anyone merging to this repository is expected to `release and monitor their changes <https://openedx.atlassian.net/wiki/spaces/RS/pages/1835106870/How+to+contribute+to+our+repositories>`__; if you are not able to do this DO NOT MERGE, please coordinate with someone who can to ensure that the changes are released.
 
